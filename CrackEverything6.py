@@ -106,6 +106,7 @@ def SMBUP():
                 content = f.read()
                 if word in content:
                     print(f"{Z} on SMB")
+
 def RDPUP():
     t = "RDP.txt"
     with open ("ports.txt", "r") as f:
@@ -460,8 +461,16 @@ def IMPACKETADH():
     with open ("Impacket.txt", "r") as f:
         content = f.read()
         print(content)
+def SMBSTAT():
+    with open ("SMB.txt", "r") as f:
+        word = "STATUS_PASSWORD_MUST_CHANGE"
+        content = f.read()
+        if word in content:
+            print(f"{RED}\nUser has STATUS_PASSWORD_MUST_CHANGE{RESET}")
+            s = Popen([f"cat SMB.txt | grep STATUS_PASSWORD_MUST_CHANGE"], shell=True)
+            s.wait()
 def REMINDER():
-    print(f"{MAGENTA}Reminder you have {RED}{Z}{RESET}{MAGENTA} on the following (if any){RED}\n")
+    print(f"{MAGENTA}\nReminder you have {RED}{Z}{RESET}{MAGENTA} on the following (if any){RED}\n")
     s = Popen([f"cat *.txt | grep {Z}"], shell=True)
     s.wait()
     print(f"{RESET}")
@@ -479,6 +488,7 @@ if PASSWORD != None:
     MSSQLUP()
     WMIUP()
     VNCUP()
+    SMBSTAT()
     REMINDER()
 if HASH != None:
     SMBH()
@@ -489,8 +499,8 @@ if HASH != None:
     MSSQLH()
     WMIH()
     VNCH()
+    SMBSTAT()
     REMINDER()
-
 if IMP is not False and DOMAIN != None:
     input("Put domain name in /etc/hosts, press enter to continue")
     if PASSWORD != None:
