@@ -29,6 +29,7 @@ parser.add_argument("-r", "--RHOST", action="store", help="RHOST, -r 10.10.10.1 
 parser.add_argument("-u", "--USERNAME", action="store", help="Username")
 parser.add_argument("-p", "--PASSWORD", action="store", help="Password")
 parser.add_argument("-d", "--DOMAIN", action="store", help="Domain Name")
+parser.add_argument("-J", "--JustTest", action="store_true", help="Test network to see if you have Pwn3d on the different services")
 parser.add_argument("-H", "--HASH", action="store", help="NT hashes")
 parser.add_argument("-F", "--FILE", action="store", help="IP address file ex: internal.txt (Do not use with file)")
 parser.add_argument("-I", "--IMPACKET", action="store_true", help="Run Impacket against target, works best if you know you are an administrator")
@@ -43,7 +44,8 @@ PASSWORD = args.PASSWORD
 HASH = args.HASH
 FILE = args.FILE
 IMP = args.IMPACKET
-Z = args.PWN3D 
+Z = args.PWN3D
+TEST = args.JustTest 
 
 c = "crackmapexec"
 cs = f"{c} smb"
@@ -94,6 +96,77 @@ def NMAPF():
     with open ("ports.txt", "r") as f:
         content = f.read()
         print(content)
+
+def TESTME():
+    print(f"{YELLOW}Running tests to see if we have {Z}{RESET}")
+    t = "SMB.txt"
+    with open ("ports.txt", "r") as f:
+        word = "445"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against SMB, saving to {t}{RESET}")
+            s = Popen([f"{cs} {crup} >> {t}"], shell=True)
+            s.wait()
+    t = "RDP.txt"
+    with open ("ports.txt", "r") as f:
+        word = "3389"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against RDP, saving to {t}{RESET}")
+            s = Popen([f"{cr} {crup} >> {t}"], shell=True)
+            s.wait()
+    t = "WINRM.txt"
+    with open ("ports.txt", "r") as f:
+        word = "5985"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against WINRM, saving to {t}{RESET}")
+            s = Popen([f"{cw} {crup} >> {t}"], shell=True)
+            s.wait()
+    t = "SSH.txt"
+    with open ("ports.txt", "r") as f:
+        word = "22/tcp"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against SSH, saving to {t}{RESET}")
+            s = Popen([f"{ch} {crup} >> {t}"], shell=True)
+            s.wait()
+    t = "LDAP.txt"
+    with open ("ports.txt", "r") as f:
+        word = "636"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against LDAP and saving to {t}{RESET}")
+            s = Popen([f"{cl} {crup} >> {t}"], shell=True)
+            s.wait()
+    t = "MSSQL.txt"
+    with open ("ports.txt", "r") as f:
+        word = "1433"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against MSSQL, saving to {t}{RESET}")
+            s = Popen([f"{cm} {crup} >> {t}"], shell=True)
+            s.wait()
+    t = "VNC.txt"
+    with open ("ports.txt", "r") as f:
+        word = "5600"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against VNC, saving to {t}{RESET}")
+            s = Popen([f"{cm} {crup} >> {t}"], shell=True)
+            s.wait()
+    t = "FTP.txt"
+    with open ("ports.txt", "r") as f:
+        word = "21"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against FTP, saving to {t}{RESET}")
+            s = Popen([f"{cm} {crup} >> {t}"], shell=True)
+            s.wait()
+    print(f"{MAGENTA}\nReminder you have {RED}{Z}{RESET}{MAGENTA} on the following (if any){RED}\n")
+    s = Popen([f"cat *.txt | grep {Z}"], shell=True)
+    s.wait()
+    print(f"{RESET}")
 
 def SMBUP():
     t = "SMB.txt"
@@ -155,7 +228,7 @@ def WINRMUP():
 def SSHUP():
     t = "SSH.txt"
     with open ("ports.txt", "r") as f:
-        word = "22"
+        word = "22/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against SSH, saving to {t}{RESET}")
@@ -527,6 +600,10 @@ if FILE != None:
     NMAPF()
 if RHOST != None:
     NMAPR()
+if TEST is not False:
+    TESTME()
+    SMBSTAT()
+    quit()
 if PASSWORD != None:
     SMBUP()
     RDPUP()
