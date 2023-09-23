@@ -4,6 +4,11 @@ Crack Everything for CrackMapExec version 6
 
 https://github.com/overgrowncarrot1/CrackEverything6/assets/78485709/84aa224d-ee01-4d4c-894b-ae152341dac3
 
+To test against login capabilites
+
+```
+python ~/Tools/CrackEverything6.py -r <RHOST> -u <USERNAME> -p <PASSWORD> -d <DOMAIN NAME> -Z <PROMPT> -J
+```
 
 To run against a single host
 
