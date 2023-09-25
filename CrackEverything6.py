@@ -47,7 +47,7 @@ IMP = args.IMPACKET
 Z = args.PWN3D
 TEST = args.JustTest 
 
-c = "netexec"
+c = "crackmapexec"
 cs = f"{c} smb"
 cw = f"{c} winrm"
 ch = f"{c} ssh"
