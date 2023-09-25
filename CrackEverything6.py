@@ -47,7 +47,7 @@ IMP = args.IMPACKET
 Z = args.PWN3D
 TEST = args.JustTest 
 
-c = "crackmapexec"
+c = "netexec"
 cs = f"{c} smb"
 cw = f"{c} winrm"
 ch = f"{c} ssh"
@@ -80,9 +80,6 @@ lisid = f"impacket-lookupsid {iwd}"
 lisidh = f"impacket-lookupsid {iwdh}"
 lisec = f"impacket-secretsdump {iwd}"
 lisech = f"impacket-secretsdump {iwdh}"
-
-print(f"{RED}\n****REMEMBER TO RUN WITH DOMAIN NAME IF YOU ARE USING A DOMAIN USER****\n{RESET}")
-time.sleep(3)
 
 def NMAPR():
     print(f"{YELLOW}Running NMAP against target to not waste your time{RESET}\n")
@@ -162,6 +159,77 @@ def TESTME():
         if word in content:
             print(f"{YELLOW}\nRunning against FTP, saving to {t}{RESET}")
             s = Popen([f"{cm} {crup} >> {t}"], shell=True)
+            s.wait()
+    print(f"{MAGENTA}\nReminder you have {RED}{Z}{RESET}{MAGENTA} on the following (if any){RED}\n")
+    s = Popen([f"cat *.txt | grep {Z}"], shell=True)
+    s.wait()
+    print(f"{RESET}")
+
+def TESTMEH():
+    print(f"{YELLOW}Running tests to see if we have {Z}{RESET}")
+    t = "SMB.txt"
+    with open ("ports.txt", "r") as f:
+        word = "445"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against SMB, saving to {t}{RESET}")
+            s = Popen([f"{cs} {cruh} >> {t}"], shell=True)
+            s.wait()
+    t = "RDP.txt"
+    with open ("ports.txt", "r") as f:
+        word = "3389"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against RDP, saving to {t}{RESET}")
+            s = Popen([f"{cr} {cruh} >> {t}"], shell=True)
+            s.wait()
+    t = "WINRM.txt"
+    with open ("ports.txt", "r") as f:
+        word = "5985"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against WINRM, saving to {t}{RESET}")
+            s = Popen([f"{cw} {cruh} >> {t}"], shell=True)
+            s.wait()
+    t = "SSH.txt"
+    with open ("ports.txt", "r") as f:
+        word = "22/tcp"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against SSH, saving to {t}{RESET}")
+            s = Popen([f"{ch} {cruh} >> {t}"], shell=True)
+            s.wait()
+    t = "LDAP.txt"
+    with open ("ports.txt", "r") as f:
+        word = "636"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against LDAP and saving to {t}{RESET}")
+            s = Popen([f"{cl} {cruh} >> {t}"], shell=True)
+            s.wait()
+    t = "MSSQL.txt"
+    with open ("ports.txt", "r") as f:
+        word = "1433"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against MSSQL, saving to {t}{RESET}")
+            s = Popen([f"{cm} {cruh} >> {t}"], shell=True)
+            s.wait()
+    t = "VNC.txt"
+    with open ("ports.txt", "r") as f:
+        word = "5600"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against VNC, saving to {t}{RESET}")
+            s = Popen([f"{cm} {cruh} >> {t}"], shell=True)
+            s.wait()
+    t = "FTP.txt"
+    with open ("ports.txt", "r") as f:
+        word = "21"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against FTP, saving to {t}{RESET}")
+            s = Popen([f"{cm} {cruh} >> {t}"], shell=True)
             s.wait()
     print(f"{MAGENTA}\nReminder you have {RED}{Z}{RESET}{MAGENTA} on the following (if any){RED}\n")
     s = Popen([f"cat *.txt | grep {Z}"], shell=True)
@@ -595,14 +663,27 @@ def REMINDER():
     s = Popen([f"cat *.txt | grep {Z}"], shell=True)
     s.wait()
     print(f"{RESET}")
-
+def LANEBOY():
+    print(f"\n{YELLOW}I know a thing or two about pain and darkness...{RESET}")
+def VIOLENCE():
+    print(f"\n{RED}Sometimes quiet is violence...{RESET}")
+def EYELIDS():
+    print(f"\n{RED}Behind my eyelids are mountains of violence...{RESET}")
+def FEAR():
+    print(f"\n{YELLOW}I will fear the night again...{RESET}")
 if FILE != None:
     NMAPF()
 if RHOST != None:
     NMAPR()
-if TEST is not False:
+if TEST is not False and PASSWORD != None:
     TESTME()
     SMBSTAT()
+    LANEBOY()
+    quit()
+if TEST is not False and HASH != None:
+    TESTMEH()
+    SMBSTAT()
+    LANEBOY()
     quit()
 if PASSWORD != None:
     SMBUP()
@@ -615,7 +696,9 @@ if PASSWORD != None:
     VNCUP()
     SMBSTAT()
     REMINDER()
+    EYELIDS()
 if HASH != None:
+    print(f"Trying with hash {HASH}")
     SMBH()
     RDPH()
     WINRMH()
@@ -626,9 +709,11 @@ if HASH != None:
     VNCH()
     SMBSTAT()
     REMINDER()
+    VIOLENCE()
 if IMP is not False and DOMAIN != None:
     input("Put domain name in /etc/hosts, press enter to continue")
     if PASSWORD != None:
         IMPACKETADUP()
     if HASH != None:
         IMPACKETADH()
+    FEAR()
