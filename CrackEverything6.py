@@ -31,9 +31,10 @@ parser.add_argument("-p", "--PASSWORD", action="store", help="Password")
 parser.add_argument("-d", "--DOMAIN", action="store", help="Domain Name")
 parser.add_argument("-J", "--JustTest", action="store_true", help="Test network to see if you have Pwn3d on the different services")
 parser.add_argument("-H", "--HASH", action="store", help="NT hashes")
-parser.add_argument("-F", "--FILE", action="store", help="IP address file ex: internal.txt (Do not use with file)")
+parser.add_argument("-F", "--FILE", action="store", help="IP address file ex: internal.txt (Do not use with rhost)")
 parser.add_argument("-I", "--IMPACKET", action="store_true", help="Run Impacket against target, works best if you know you are an administrator")
 parser.add_argument("-Z", "--PWN3D", action="store", help="Use if you have changed your cme.conf file to show something different than Pwn3d!, ex: -Z Shell! or -Z Admin!")
+parser.add_argument("-L", "--LDAPT", action="store_true", help="Also test for LDAP, can take a long time")
 args = parser.parse_args()
 parser.parse_args(args=None if sys.argv[1:] else ['--help'])
 
@@ -46,6 +47,7 @@ FILE = args.FILE
 IMP = args.IMPACKET
 Z = args.PWN3D
 TEST = args.JustTest 
+L = args.LDAPT
 
 c = "crackmapexec"
 cs = f"{c} smb"
@@ -61,9 +63,9 @@ crup = f"{RHOST or FILE} -u {USERNAME} -p {PASSWORD}"
 cruh = f"{RHOST or FILE} -u {USERNAME} -H {HASH}"
 smbarg = "--shares --groups --users --sessions --computers --pass-pol"
 i = f"{DOMAIN}/{USERNAME}:{PASSWORD}@{RHOST}"
-ih = f"{DOMAIN}/{USERNAME}@{RHOST} --hashes {HASH}"
+ih = f"{DOMAIN}/{USERNAME}@{RHOST} -hashes :{HASH}"
 iwd = f"/{USERNAME}:{PASSWORD}@{RHOST}"
-iwdh = f"/{USERNAME}@{RHOST} --hashes {HASH}"
+iwdh = f"/{USERNAME}@{RHOST} -hashes :{HASH}"
 inp = f"impacket-GetNPUsers {i}"
 inph = f"impacket-GetNPUsers {ih}"
 ispn = f"impacket-GetUserSPNs {i}"
@@ -128,14 +130,6 @@ def TESTME():
             print(f"{YELLOW}\nRunning against SSH, saving to {t}{RESET}")
             s = Popen([f"{ch} {crup} >> {t}"], shell=True)
             s.wait()
-    t = "LDAP.txt"
-    with open ("ports.txt", "r") as f:
-        word = "636/tcp"
-        content = f.read()
-        if word in content:
-            print(f"{YELLOW}\nRunning against LDAP and saving to {t}{RESET}")
-            s = Popen([f"{cl} {crup} >> {t}"], shell=True)
-            s.wait()
     t = "MSSQL.txt"
     with open ("ports.txt", "r") as f:
         word = "1433/tcp"
@@ -164,6 +158,15 @@ def TESTME():
     s = Popen([f"cat *.txt | grep {Z}"], shell=True)
     s.wait()
     print(f"{RESET}")
+def LDAPTEST():
+    t = "LDAP.txt"
+    with open ("ports.txt", "r") as f:
+        word = "636/tcp"
+        content = f.read()
+        if word in content:
+            print(f"{YELLOW}\nRunning against LDAP and saving to {t}{RESET}")
+            s = Popen([f"{cl} {crup} >> {t}"], shell=True)
+            s.wait()
 
 def TESTMEH():
     print(f"{YELLOW}Running tests to see if we have {Z}{RESET}")
@@ -199,14 +202,6 @@ def TESTMEH():
             print(f"{YELLOW}\nRunning against SSH, saving to {t}{RESET}")
             s = Popen([f"{ch} {cruh} >> {t}"], shell=True)
             s.wait()
-    t = "LDAP.txt"
-    with open ("ports.txt", "r") as f:
-        word = "636/tcp"
-        content = f.read()
-        if word in content:
-            print(f"{YELLOW}\nRunning against LDAP and saving to {t}{RESET}")
-            s = Popen([f"{cl} {cruh} >> {t}"], shell=True)
-            s.wait()
     t = "MSSQL.txt"
     with open ("ports.txt", "r") as f:
         word = "1433/tcp"
@@ -235,6 +230,8 @@ def TESTMEH():
     s = Popen([f"cat *.txt | grep {Z}"], shell=True)
     s.wait()
     print(f"{RESET}")
+
+
 
 def SMBUP():
     t = "SMB.txt"
@@ -676,40 +673,78 @@ if FILE != None:
 if RHOST != None:
     NMAPR()
 if TEST is not False and PASSWORD != None:
-    TESTME()
-    SMBSTAT()
-    LANEBOY()
-    quit()
+    if L is not False:
+        TESTME()
+        SMBSTAT()
+        LDAPTEST()
+        LANEBOY()
+        quit()
+    else:
+        TESTME()
+        SMBSTAT()
+        LANEBOY()
+        quit()
 if TEST is not False and HASH != None:
-    TESTMEH()
-    SMBSTAT()
-    LANEBOY()
-    quit()
+    if L is not False:
+        TESTMEH()
+        LDAPTEST()
+        SMBSTAT()
+        LANEBOY()
+        quit()
+    else:
+        TESTMEH()
+        SMBSTAT()
+        LANEBOY()
+        quit()
 if PASSWORD != None:
-    SMBUP()
-    RDPUP()
-    WINRMUP()
-    SSHUP()
-    LDAPUP()
-    MSSQLUP()
-    WMIUP()
-    VNCUP()
-    SMBSTAT()
-    REMINDER()
-    EYELIDS()
+    if L is not False:
+        SMBUP()
+        RDPUP()
+        WINRMUP()
+        SSHUP()
+        LDAPUP()
+        MSSQLUP()
+        WMIUP()
+        VNCUP()
+        SMBSTAT()
+        REMINDER()
+        EYELIDS()
+    else:
+        SMBUP()
+        RDPUP()
+        WINRMUP()
+        SSHUP()
+        MSSQLUP()
+        WMIUP()
+        VNCUP()
+        SMBSTAT()
+        REMINDER()
+        EYELIDS()
 if HASH != None:
     print(f"Trying with hash {HASH}")
-    SMBH()
-    RDPH()
-    WINRMH()
-    SSHH()
-    LDAPH()
-    MSSQLH()
-    WMIH()
-    VNCH()
-    SMBSTAT()
-    REMINDER()
-    VIOLENCE()
+    if L is not False:
+        SMBH()
+        RDPH()
+        WINRMH()
+        SSHH()
+        LDAPH()
+        MSSQLH()
+        WMIH()
+        VNCH()
+        SMBSTAT()
+        REMINDER()
+        VIOLENCE()
+    else:
+        SMBH()
+        RDPH()
+        WINRMH()
+        SSHH()
+        MSSQLH()
+        WMIH()
+        VNCH()
+        SMBSTAT()
+        REMINDER()
+        VIOLENCE()
 if IMP is not False and DOMAIN != None:
     input("Put domain name in /etc/hosts, press enter to continue")
     if PASSWORD != None:
