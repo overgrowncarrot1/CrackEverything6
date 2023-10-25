@@ -47,7 +47,7 @@ IMP = args.IMPACKET
 Z = args.PWN3D
 TEST = args.JustTest 
 
-c = "crackmapexec"
+c = "netexec"
 cs = f"{c} smb"
 cw = f"{c} winrm"
 ch = f"{c} ssh"
@@ -98,7 +98,7 @@ def TESTME():
     print(f"{YELLOW}Running tests to see if we have {Z}{RESET}")
     t = "SMB.txt"
     with open ("ports.txt", "r") as f:
-        word = "445"
+        word = "445/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against SMB, saving to {t}{RESET}")
@@ -106,7 +106,7 @@ def TESTME():
             s.wait()
     t = "RDP.txt"
     with open ("ports.txt", "r") as f:
-        word = "3389"
+        word = "3389/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against RDP, saving to {t}{RESET}")
@@ -114,7 +114,7 @@ def TESTME():
             s.wait()
     t = "WINRM.txt"
     with open ("ports.txt", "r") as f:
-        word = "5985"
+        word = "5985/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against WINRM, saving to {t}{RESET}")
@@ -130,7 +130,7 @@ def TESTME():
             s.wait()
     t = "LDAP.txt"
     with open ("ports.txt", "r") as f:
-        word = "636"
+        word = "636/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against LDAP and saving to {t}{RESET}")
@@ -138,7 +138,7 @@ def TESTME():
             s.wait()
     t = "MSSQL.txt"
     with open ("ports.txt", "r") as f:
-        word = "1433"
+        word = "1433/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against MSSQL, saving to {t}{RESET}")
@@ -146,7 +146,7 @@ def TESTME():
             s.wait()
     t = "VNC.txt"
     with open ("ports.txt", "r") as f:
-        word = "5600"
+        word = "5600/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against VNC, saving to {t}{RESET}")
@@ -154,7 +154,7 @@ def TESTME():
             s.wait()
     t = "FTP.txt"
     with open ("ports.txt", "r") as f:
-        word = "21"
+        word = "21/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against FTP, saving to {t}{RESET}")
@@ -169,7 +169,7 @@ def TESTMEH():
     print(f"{YELLOW}Running tests to see if we have {Z}{RESET}")
     t = "SMB.txt"
     with open ("ports.txt", "r") as f:
-        word = "445"
+        word = "445/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against SMB, saving to {t}{RESET}")
@@ -177,7 +177,7 @@ def TESTMEH():
             s.wait()
     t = "RDP.txt"
     with open ("ports.txt", "r") as f:
-        word = "3389"
+        word = "3389/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against RDP, saving to {t}{RESET}")
@@ -185,7 +185,7 @@ def TESTMEH():
             s.wait()
     t = "WINRM.txt"
     with open ("ports.txt", "r") as f:
-        word = "5985"
+        word = "5985/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against WINRM, saving to {t}{RESET}")
@@ -201,7 +201,7 @@ def TESTMEH():
             s.wait()
     t = "LDAP.txt"
     with open ("ports.txt", "r") as f:
-        word = "636"
+        word = "636/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against LDAP and saving to {t}{RESET}")
@@ -209,7 +209,7 @@ def TESTMEH():
             s.wait()
     t = "MSSQL.txt"
     with open ("ports.txt", "r") as f:
-        word = "1433"
+        word = "1433/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against MSSQL, saving to {t}{RESET}")
@@ -217,7 +217,7 @@ def TESTMEH():
             s.wait()
     t = "VNC.txt"
     with open ("ports.txt", "r") as f:
-        word = "5600"
+        word = "5600/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against VNC, saving to {t}{RESET}")
@@ -225,7 +225,7 @@ def TESTMEH():
             s.wait()
     t = "FTP.txt"
     with open ("ports.txt", "r") as f:
-        word = "21"
+        word = "21/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against FTP, saving to {t}{RESET}")
@@ -239,7 +239,7 @@ def TESTMEH():
 def SMBUP():
     t = "SMB.txt"
     with open ("ports.txt", "r") as f:
-        word = "445"
+        word = "445/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against SMB, saving to {t}{RESET}")
@@ -260,7 +260,7 @@ def SMBUP():
 def RDPUP():
     t = "RDP.txt"
     with open ("ports.txt", "r") as f:
-        word = "3389"
+        word = "3389/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against RDP, saving to {t}{RESET}")
@@ -277,7 +277,7 @@ def RDPUP():
 def WINRMUP():
     t = "WINRM.txt"
     with open ("ports.txt", "r") as f:
-        word = "5985"
+        word = "5985/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against WINRM, saving to {t}{RESET}")
@@ -313,7 +313,7 @@ def SSHUP():
 def LDAPUP():
     t = "LDAP.txt"
     with open ("ports.txt", "r") as f:
-        word = "636"
+        word = "636/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against LDAP and checking delegation, password not required and more, saving to {t}{RESET}")
@@ -333,7 +333,7 @@ def LDAPUP():
 def MSSQLUP():
     t = "MSSQL.txt"
     with open ("ports.txt", "r") as f:
-        word = "1433"
+        word = "1433/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against MSSQL, saving to {t}{RESET}")
@@ -353,7 +353,7 @@ def MSSQLUP():
 def WMIUP():
     t = "WMI.txt"
     with open ("ports.txt", "r") as f:
-        word = "135"
+        word = "135/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against WMI, saving to {t}{RESET}")
@@ -373,7 +373,7 @@ def WMIUP():
 def VNCUP():
     t = "VNC.txt"
     with open ("ports.txt", "r") as f:
-        word = "5600"
+        word = "5600/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against VNC, saving to {t}{RESET}")
@@ -390,7 +390,7 @@ def VNCUP():
 def FTPUP():
     t = "FTP.txt"
     with open ("ports.txt", "r") as f:
-        word = "21"
+        word = "21/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against FTP, saving to {t}{RESET}")
@@ -409,7 +409,7 @@ def FTPUP():
 def SMBH():
     t = "SMB.txt"
     with open ("ports.txt", "r") as f:
-        word = "445"
+        word = "445/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against SMB, saving to {t}{RESET}")
@@ -430,7 +430,7 @@ def SMBH():
 def RDPH():
     t = "RDP.txt"
     with open ("ports.txt", "r") as f:
-        word = "3389"
+        word = "3389/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against RDP, saving to {t}{RESET}")
@@ -447,7 +447,7 @@ def RDPH():
 def WINRMH():
     t = "WINRM.txt"
     with open ("ports.txt", "r") as f:
-        word = "5985"
+        word = "5985/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against WINRM, saving to {t}{RESET}")
@@ -466,7 +466,7 @@ def WINRMH():
 def SSHH():
     t = "SSH.txt"
     with open ("ports.txt", "r") as f:
-        word = "22"
+        word = "22/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against SSH, saving to {t}{RESET}")
@@ -483,7 +483,7 @@ def SSHH():
 def LDAPH():
     t = "LDAP.txt"
     with open ("ports.txt", "r") as f:
-        word = "636"
+        word = "636/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against LDAP and checking delegation, password not required and more, saving to {t}{RESET}")
@@ -503,7 +503,7 @@ def LDAPH():
 def MSSQLH():
     t = "MSSQL.txt"
     with open ("ports.txt", "r") as f:
-        word = "1433"
+        word = "1433/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against MSSQL, saving to {t}{RESET}")
@@ -523,7 +523,7 @@ def MSSQLH():
 def WMIH():
     t = "WMI.txt"
     with open ("ports.txt", "r") as f:
-        word = "135"
+        word = "135/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against WMI, saving to {t}{RESET}")
@@ -543,7 +543,7 @@ def WMIH():
 def VNCH():
     t = "VNC.txt"
     with open ("ports.txt", "r") as f:
-        word = "5600"
+        word = "5600/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against VNC, saving to {t}{RESET}")
@@ -560,7 +560,7 @@ def VNCH():
 def FTPH():
     t = "FTP.txt"
     with open ("ports.txt", "r") as f:
-        word = "21"
+        word = "21/tcp"
         content = f.read()
         if word in content:
             print(f"{YELLOW}\nRunning against FTP, saving to {t}{RESET}")
