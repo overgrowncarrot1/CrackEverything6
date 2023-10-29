@@ -32,6 +32,7 @@ parser.add_argument("-d", "--DOMAIN", action="store", help="Domain Name")
 parser.add_argument("-J", "--JustTest", action="store_true", help="Test network to see if you have Pwn3d on the different services")
 parser.add_argument("-H", "--HASH", action="store", help="NT hashes")
 parser.add_argument("-F", "--FILE", action="store", help="IP address file ex: internal.txt (Do not use with rhost)")
+parser.add_argument("-B", "--BLOOD", action="store_true", help="Run Bloodhound")
 parser.add_argument("-I", "--IMPACKET", action="store_true", help="Run Impacket against target, works best if you know you are an administrator")
 parser.add_argument("-Z", "--PWN3D", action="store", help="Use if you have changed your cme.conf file to show something different than Pwn3d!, ex: -Z Shell! or -Z Admin!")
 parser.add_argument("-L", "--LDAPT", action="store_true", help="Also test for LDAP, can take a long time")
@@ -48,6 +49,7 @@ IMP = args.IMPACKET
 Z = args.PWN3D
 TEST = args.JustTest 
 L = args.LDAPT
+BLOOD = args.BLOOD
 
 c = "crackmapexec"
 cs = f"{c} smb"
@@ -655,6 +657,55 @@ def SMBSTAT():
             print(f"{RED}\nUser has STATUS_PASSWORD_MUST_CHANGE{RESET}")
             s = Popen([f"cat SMB.txt | grep STATUS_PASSWORD_MUST_CHANGE"], shell=True)
             s.wait()
+
+def D():
+    print(f"{YELLOW}Getting Domain Name and saving to domain_name.txt{RESET}")
+    s = Popen([f"nxc smb {RHOST} > a.txt"], shell=True)
+    s.wait()
+    s = Popen([f"cut -d ':' -f 3 a.txt > b.txt"], shell=True)
+    s.wait()
+    s = Popen([f"cut -d ')' -f 1 b.txt > domain.txt"], shell=True)
+    s.wait()
+    s = Popen([f"cat domain.txt | sed 's/ //g' > domain1.txt"], shell=True)
+    s.wait()
+    s = Popen([f"cat domain1.txt | sed 's/ //g' > domain.txt"], shell=True)
+    s.wait()
+    s = Popen([f"tr -d '\n' < domain.txt > domain_name.txt"], shell=True)
+    s.wait()
+    with open ("domain_name.txt", "r") as f:
+        content = f.read()
+        print(f"{YELLOW}Domain name is {MAGENTA}{content}{RESET}")
+    os.remove("a.txt")
+    os.remove("b.txt")
+    os.remove("domain1.txt")
+    os.remove("domain.txt")
+
+def BLOODUP():
+    path = 'Blood'
+    check_path = os.path.isdir(path)
+    if check_path == True:
+        os.chdir(path)
+    else:
+        os.mkdir(path)
+        os.chdir(path)
+    with open("../domain_name.txt", "r") as f:
+        content = f.read()
+    s = Popen([f"bloodhound-python -d {content} -u {USERNAME} -p {PASSWORD} -c all -ns {RHOST}"], shell=True)
+    s.wait()
+
+def BLOODH():
+    path = 'Blood'
+    check_path = os.path.isdir(path)
+    if check_path == True:
+        os.chdir(path)
+    else:
+        os.mkdir(path)
+        os.chdir(path)
+    with open("../domain_name.txt", "r") as f:
+        content = f.read()
+    s = Popen([f"bloodhound-python -d {content} -u {USERNAME} --hashes 00000000000000000000000000000000:{HASH} -c all -ns {RHOST}"], shell=True)
+    s.wait()
+
 def REMINDER():
     print(f"{MAGENTA}\nReminder you have {RED}{Z}{RESET}{MAGENTA} on the following (if any){RED}\n")
     s = Popen([f"cat *.txt | grep {Z}"], shell=True)
@@ -668,6 +719,17 @@ def EYELIDS():
     print(f"\n{RED}Behind my eyelids are mountains of violence...{RESET}")
 def FEAR():
     print(f"\n{YELLOW}I will fear the night again...{RESET}")
+
+#####################################################################################################################
+
+if BLOOD is not False and PASSWORD != None:
+    D()
+    BLOODUP()
+    quit()
+if BLOOD is not False and HASH != None:
+    D()
+    BLOODH()
+    quit()
 if FILE != None:
     NMAPF()
 if RHOST != None:
@@ -709,6 +771,7 @@ if PASSWORD != None:
         SMBSTAT()
         REMINDER()
         EYELIDS()
+        quit()
     else:
         SMBUP()
         RDPUP()
@@ -720,6 +783,7 @@ if PASSWORD != None:
         SMBSTAT()
         REMINDER()
         EYELIDS()
+        quit()
 if HASH != None:
     print(f"Trying with hash {HASH}")
     if L is not False:
@@ -734,6 +798,7 @@ if HASH != None:
         SMBSTAT()
         REMINDER()
         VIOLENCE()
+        quit()
     else:
         SMBH()
         RDPH()
@@ -745,6 +810,7 @@ if HASH != None:
         SMBSTAT()
         REMINDER()
         VIOLENCE()
+        quit()
 if IMP is not False and DOMAIN != None:
     input("Put domain name in /etc/hosts, press enter to continue")
     if PASSWORD != None:
