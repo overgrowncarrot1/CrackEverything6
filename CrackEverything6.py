@@ -5,17 +5,19 @@
 #User either RHOST or Network or File, do not try to run with more than one at a time
 #if domain name is unknown run script and it will show you the domain name
 
-import os
-import argparse
-import sys
-import time
-import subprocess
+import os, sys, time, subprocess
+try:
+    import argparse
+except ImportError:
+    os.system("python3 -m pip install argparse")
+    os.system("python -m pip install argparse")
+
 from subprocess import Popen
 try:
     from colorama import Fore
 except ImportError:
-    os.system("pip3 install colorama")
-    os.system("pip install colorama")
+    os.system("python3 -m pip install colorama")
+    os.system("python -m pip install colorama")
 
 RED = Fore.RED
 YELLOW = Fore.YELLOW
@@ -730,97 +732,68 @@ def FEAR():
 
 #####################################################################################################################
 
-if BLOOD is not False and PASSWORD != None:
-    D()
-    BLOODUP()
-    quit()
-if BLOOD is not False and HASH != None:
-    D()
-    BLOODH()
-    quit()
-if FILE != None:
-    NMAPF()
-if RHOST != None:
-    NMAPR()
-if TEST is not False and PASSWORD != None:
-    if L is not False:
-        TESTME()
-        SMBSTAT()
-        LDAPTEST()
-        LANEBOY()
-    else:
-        TESTME()
-        SMBSTAT()
-        LANEBOY()
-if TEST is not False and HASH != None:
-    if L is not False:
-        TESTMEH()
-        LDAPTEST()
-        SMBSTAT()
-        LANEBOY()
-    else:
-        TESTMEH()
-        SMBSTAT()
-        LANEBOY()
-if PASSWORD != None and TEST is not True:
-    if L is not False:
-        SMBUP()
-        RDPUP()
-        WINRMUP()
-        SSHUP()
-        LDAPUP()
-        MSSQLUP()
-        WMIUP()
-        VNCUP()
-        SMBSTAT()
-        REMINDER()
-        EYELIDS()
-    else:
-        SMBUP()
-        RDPUP()
-        WINRMUP()
-        SSHUP()
-        MSSQLUP()
-        WMIUP()
-        VNCUP()
-        SMBSTAT()
-        REMINDER()
-        EYELIDS()
-if HASH != None and TEST is not True:
-    print(f"Trying with hash {HASH}")
-    if L is not False:
-        SMBH()
-        RDPH()
-        WINRMH()
-        SSHH()
-        LDAPH()
-        MSSQLH()
-        WMIH()
-        VNCH()
-        SMBSTAT()
-        REMINDER()
-        VIOLENCE()
-    else:
-        SMBH()
-        RDPH()
-        WINRMH()
-        SSHH()
-        MSSQLH()
-        WMIH()
-        VNCH()
-        SMBSTAT()
-        REMINDER()
-        VIOLENCE()
-if IMP is not False and DOMAIN == None:
-    D()
-    print(f"{RED}Need -d argument for domain name shown above{RESET}")
-    quit()
-if IMP is not False and DOMAIN != None:
-    D()
-    HOSTS()
-    input(f"{RED}Put domain name in /etc/hosts, press enter to continue{RESET}")
-    if PASSWORD != None:
-        IMPACKETADUP()
-    if HASH != None:
-        IMPACKETADH()
-    FEAR()
+def main():
+    if BLOOD is not False and PASSWORD != None:
+        D();BLOODUP();quit()
+    
+    if BLOOD is not False and HASH != None:
+        D();BLOODH();quit()
+
+    if FILE != None:
+        NMAPF()
+
+    if RHOST != None:
+        NMAPR()
+    
+    if TEST is not False and PASSWORD != None:
+        if L is not False:
+            TESTME();SMBSTAT();LDAPTEST();LANEBOY()
+    
+        else:
+            TESTME();SMBSTAT();LANEBOY()
+    
+    if TEST is not False and HASH != None:
+        if L is not False:
+            TESTMEH();LDAPTEST();SMBSTAT();LANEBOY()
+    
+        else:
+            TESTMEH();SMBSTAT();LANEBOY()
+    if PASSWORD != None and TEST is not True:
+    
+        if L is not False:
+            SMBUP();RDPUP();WINRMUP();SSHUP()
+            LDAPUP();MSSQLUP();WMIUP();VNCUP()
+            SMBSTAT();REMINDER();EYELIDS()
+    
+        else:
+            SMBUP();RDPUP();WINRMUP();SSHUP()
+            MSSQLUP();WMIUP();VNCUP();SMBSTAT()
+            REMINDER();EYELIDS()
+    
+    if HASH != None and TEST is not True:
+        print(f"Trying with hash {HASH}")
+        if L is not False:
+            SMBH();RDPH();WINRMH();SSHH();LDAPH();
+            MSSQLH();WMIH();VNCH();SMBSTAT();REMINDER();
+            VIOLENCE()
+        else:
+            SMBH();RDPH();WINRMH();SSHH();
+            MSSQLH();WMIH();VNCH();SMBSTAT();
+            REMINDER();VIOLENCE()
+
+    if IMP is not False and DOMAIN == None:
+        D()
+        print(f"{RED}Need -d argument for domain name shown above{RESET}")
+        quit()
+    if IMP is not False and DOMAIN != None:
+        D()
+        HOSTS()
+        input(f"{RED}Put domain name in /etc/hosts, press enter to continue{RESET}")
+        if PASSWORD != None:
+            IMPACKETADUP()
+        if HASH != None:
+            IMPACKETADH()
+        FEAR()
+
+if __name__ == '__main__':
+    main()
