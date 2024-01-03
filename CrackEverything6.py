@@ -53,7 +53,7 @@ TEST = args.JustTest
 L = args.LDAPT
 BLOOD = args.BLOOD
 
-c = "crackmapexec"
+c = "nxc"
 cs = f"{c} smb"
 cw = f"{c} winrm"
 ch = f"{c} ssh"
