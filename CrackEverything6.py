@@ -36,6 +36,7 @@ parser.add_argument("-H", "--HASH", action="store", help="NT hashes")
 parser.add_argument("-F", "--FILE", action="store", help="IP address file ex: internal.txt (Do not use with rhost)")
 parser.add_argument("-B", "--BLOOD", action="store_true", help="Run Bloodhound")
 parser.add_argument("-I", "--IMPACKET", action="store_true", help="Run Impacket against target, works best if you know you are an administrator")
+parser.add_argument("-C", "--CERTIFICATES", action="store_true", help="See if there are any vulnerable certificates")
 parser.add_argument("-Z", "--PWN3D", action="store", help="Use if you have changed your cme.conf file to show something different than Pwn3d!, ex: -Z Shell! or -Z Admin!")
 parser.add_argument("-L", "--LDAPT", action="store_true", help="Also test for LDAP, can take a long time")
 args = parser.parse_args()
@@ -234,8 +235,6 @@ def TESTMEH():
     s = Popen([f"cat *.txt | grep {Z}"], shell=True)
     s.wait()
     print(f"{RESET}")
-
-
 
 def SMBUP():
     t = "SMB.txt"
@@ -716,6 +715,11 @@ def HOSTS():
         content = f.read()
         print(content)
 
+def CERT():
+    print(f"{MAGENTA}\nLooking for vulnerable certificates{RESET}\n")
+    s = Popen([f"certipy-ad find -u {USERNAME} -p {PASSWORD} -dc-ip {RHOST} -stdout -vulnerable"], shell=True)
+    s.wait()
+
 def REMINDER():
     print(f"{MAGENTA}\nReminder you have {RED}{Z}{RESET}{MAGENTA} on the following (if any){RED}\n")
     s = Popen([f"cat *.txt | grep {Z}"], shell=True)
@@ -733,6 +737,11 @@ def FEAR():
 #####################################################################################################################
 
 def main():
+    if CERT is not False and USERNAME != None and PASSWORD != None:
+        CERT();quit()
+    else:
+        print(f"{RED}Need username and password for certipy-ad{RESET}")
+
     if BLOOD is not False and PASSWORD != None:
         D();BLOODUP();quit()
     
