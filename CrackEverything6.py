@@ -53,6 +53,7 @@ Z = args.PWN3D
 TEST = args.JustTest 
 L = args.LDAPT
 BLOOD = args.BLOOD
+CERTIFICATES = args.CERTIFICATES
 
 c = "nxc"
 cs = f"{c} smb"
@@ -717,7 +718,7 @@ def HOSTS():
 
 def CERT():
     print(f"{MAGENTA}\nLooking for vulnerable certificates{RESET}\n")
-    s = Popen([f"certipy-ad find -u {USERNAME} -p {PASSWORD} -dc-ip {RHOST} -stdout -vulnerable"], shell=True)
+    s = Popen([f"certipy-ad find -u {USERNAME}@{DOMAIN} -p {PASSWORD} -dc-ip {RHOST} -stdout -vulnerable"], shell=True)
     s.wait()
 
 def REMINDER():
@@ -737,7 +738,7 @@ def FEAR():
 #####################################################################################################################
 
 def main():
-    if CERT is not False and USERNAME != None and PASSWORD != None:
+    if CERTIFICATES is not False and USERNAME != None and PASSWORD != None:
         CERT();quit()
     else:
         print(f"{RED}Need username and password for certipy-ad{RESET}")
