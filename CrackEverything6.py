@@ -28,17 +28,17 @@ RESET = Fore.RESET
 
 parser = argparse.ArgumentParser(description="Crackmapexec", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-r", "--RHOST", action="store", help="RHOST, -r 10.10.10.1 ; ex: 10.10.10.0/24")
+parser.add_argument("-F", "--FILE", action="store", help="IP address file ex: internal.txt (Do not use with rhost)")
 parser.add_argument("-u", "--USERNAME", action="store", help="Username")
 parser.add_argument("-p", "--PASSWORD", action="store", help="Password")
 parser.add_argument("-d", "--DOMAIN", action="store", help="Domain Name")
 parser.add_argument("-J", "--JustTest", action="store_true", help="Test network to see if you have Pwn3d on the different services")
 parser.add_argument("-H", "--HASH", action="store", help="NT hashes")
-parser.add_argument("-F", "--FILE", action="store", help="IP address file ex: internal.txt (Do not use with rhost)")
 parser.add_argument("-B", "--BLOOD", action="store_true", help="Run Bloodhound")
 parser.add_argument("-I", "--IMPACKET", action="store_true", help="Run Impacket against target, works best if you know you are an administrator")
-parser.add_argument("-C", "--CERTIFICATES", action="store_true", help="See if there are any vulnerable certificates")
-parser.add_argument("-Z", "--PWN3D", action="store", help="Use if you have changed your cme.conf file to show something different than Pwn3d!, ex: -Z Shell! or -Z Admin!")
+parser.add_argument("-Z", "--PWN3D", action="store", help="Use if you have changed your cme.conf file to show something different than Pwn3d!, ex: -Z Shell! or -Z Admin!, or -Z +")
 parser.add_argument("-L", "--LDAPT", action="store_true", help="Also test for LDAP, can take a long time")
+parser.add_argument("-N", "--NULL", action="store_true", help="Test to see if you have NULL access anywhere")
 args = parser.parse_args()
 parser.parse_args(args=None if sys.argv[1:] else ['--help'])
 
@@ -53,7 +53,7 @@ Z = args.PWN3D
 TEST = args.JustTest 
 L = args.LDAPT
 BLOOD = args.BLOOD
-CERTIFICATES = args.CERTIFICATES
+NULL = args.NULL
 
 c = "nxc"
 cs = f"{c} smb"
@@ -236,6 +236,8 @@ def TESTMEH():
     s = Popen([f"cat *.txt | grep {Z}"], shell=True)
     s.wait()
     print(f"{RESET}")
+
+
 
 def SMBUP():
     t = "SMB.txt"
@@ -716,11 +718,69 @@ def HOSTS():
         content = f.read()
         print(content)
 
-def CERT():
-    print(f"{MAGENTA}\nLooking for vulnerable certificates{RESET}\n")
-    s = Popen([f"certipy-ad find -u {USERNAME}@{DOMAIN} -p {PASSWORD} -dc-ip {RHOST} -stdout -vulnerable"], shell=True)
-    s.wait()
-
+def NULLSP():
+    with open ("ports.txt", "r") as f:
+        content = f.read()
+        print(f"{YELLOW}Testing for NULL access on SMB{RESET}")
+        word = "445/tcp"
+        if word in content:
+            s = Popen([f"nxc smb {RHOST} -u anonymous -p '' --shares > SMB_Null.txt"], shell = True)
+            s.wait()
+            with open ("SMB_Null.txt", "r") as f:
+                content = f.read()
+                word = "NETLOGON"
+                if word in content:
+                    print(f"{YELLOW}NULL SMB ACCESS FOUND, Trying SID Brute{RESET}")
+                    s = Popen([f"nxc smb {RHOST} -u anonymous -p '' --rid-brute >> SMB_Null_Users.txt"], shell = True)
+                    s.wait()
+                    with open ("SMB_Null_Users.txt", "r") as f:
+                        content = f.read()
+                    s = Popen([f"cat SMB_Null_Users.txt | grep -i sidtypeuser > a.txt"], shell = True)
+                    s.wait()
+                    s = Popen([f"cut -d '\' -f 2 a.txt > b.txt"], shell = True)
+                    s.wait()
+                    s = Popen([f"cut -d '(' -f 1 b.txt > c.txt"], shell = True)
+                    s.wait()
+                    s = Popen([f"cat c.txt  | sed 's/ //g' >> RID_Brute_Users.txt"], shell = True)
+                    s.wait()
+                    with open("RID_Brute_Users.txt", "r") as f:
+                        content = f.read()
+                        print(content)
+                    os.remove("a.txt")
+                    os.remove("b.txt")
+                    os.remove("c.txt")
+def NULLSF():
+    with open ("ports.txt", "r") as f:
+        content = f.read()
+        print(f"{YELLOW}Testing for NULL access on SMB{RESET}")
+        word = "445/tcp"
+        if word in content:
+            s = Popen([f"nxc smb {FILE} -u anonymous -p '' --shares > SMB_Null.txt"], shell = True)
+            s.wait()
+            with open ("SMB_Null.txt", "r") as f:
+                content = f.read()
+                word = "NETLOGON"
+                if word in content:
+                    print(f"{YELLOW}Saving RID Brute users to RID_Brute_Users.txt{RESET}")
+                    s = Popen([f"nxc smb {FILE} -u anonymous -p '' --rid-brute >> SMB_Null_Users.txt"], shell = True)
+                    s.wait()
+                    with open ("SMB_Null_Users.txt", "r") as f:
+                        content = f.read()
+                        print(content)
+                    s = Popen([f"cat SMB_Null_Users.txt | grep -i sidtypeuser > a.txt"], shell = True)
+                    s.wait()
+                    s = Popen([f"cut -d '\' -f 2 a.txt > b.txt"], shell = True)
+                    s.wait()
+                    s = Popen([f"cut -d '(' -f 1 b.txt > c.txt"], shell = True)
+                    s.wait()
+                    s = Popen([f"cat c.txt  | sed 's/ //g' >> RID_Brute_Users.txt"], shell = True)
+                    s.wait()
+                    with open("RID_Brute_Users.txt", "r") as f:
+                        content = f.read()
+                        print(content)
+                    os.remove("a.txt")
+                    os.remove("b.txt")
+                    os.remove("c.txt")
 def REMINDER():
     print(f"{MAGENTA}\nReminder you have {RED}{Z}{RESET}{MAGENTA} on the following (if any){RED}\n")
     s = Popen([f"cat *.txt | grep {Z}"], shell=True)
@@ -738,11 +798,6 @@ def FEAR():
 #####################################################################################################################
 
 def main():
-    if CERTIFICATES is not False and USERNAME != None and PASSWORD != None:
-        CERT();quit()
-    else:
-        print(f"{RED}Need username and password for certipy-ad{RESET}")
-
     if BLOOD is not False and PASSWORD != None:
         D();BLOODUP();quit()
     
@@ -755,6 +810,12 @@ def main():
     if RHOST != None:
         NMAPR()
     
+    if NULL is not False and RHOST != None:
+        NULLSP()
+    
+    if NULL is not False and FILE != None:
+        NULLSF()
+
     if TEST is not False and PASSWORD != None:
         if L is not False:
             TESTME();SMBSTAT();LDAPTEST();LANEBOY()
