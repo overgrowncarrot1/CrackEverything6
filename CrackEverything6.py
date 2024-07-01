@@ -38,6 +38,7 @@ parser.add_argument("-B", "--BLOOD", action="store_true", help="Run Bloodhound")
 parser.add_argument("-I", "--IMPACKET", action="store_true", help="Run Impacket against target, works best if you know you are an administrator")
 parser.add_argument("-Z", "--PWN3D", action="store", help="Use if you have changed your cme.conf file to show something different than Pwn3d!, ex: -Z Shell! or -Z Admin!, or -Z +")
 parser.add_argument("-L", "--LDAPT", action="store_true", help="Also test for LDAP, can take a long time")
+parser.add_argument("-C", "--CERTIFICATES", action="store_true", help="Look for certificates")
 parser.add_argument("-N", "--NULL", action="store_true", help="Test to see if you have NULL access anywhere")
 args = parser.parse_args()
 parser.parse_args(args=None if sys.argv[1:] else ['--help'])
@@ -173,6 +174,43 @@ def LDAPTEST():
             print(f"{YELLOW}\nRunning against LDAP and saving to {t}{RESET}")
             s = Popen([f"{cl} {crup} >> {t}"], shell=True)
             s.wait()
+
+def LDAPSEARCHNULL():
+    s = Popen([f"cut -d '.' -f 1 domain_name.txt > a.txt"], shell=True)
+    s.wait()
+    s = Popen([f"cut -d '.' -f 2 domain_name.txt > b.txt"], shell=True)
+    s.wait()
+    with open ("a.txt", "r") as f:
+        content = f.read()
+    with open ("b.txt", "r") as f:
+        content1 = f.read()
+    s = Popen([f'ldapsearch -H ldap://{RHOST} -x -b "DC={content},DC={content1}" > LDAP_Null.txt'], shell=True)
+    s.wait()
+    s = Popen([f"rm -rf a.txt b.txt"], shell=True)
+    s.wait()
+def LDAPSEARCHNULLCHECK():
+    time.sleep(5)
+    with open ("LDAP_Null.txt", "r") as f:
+        word = "sAMAccountType"
+        content = f.read()
+        if word in content:
+            print(f"{RED} Null LDAP Search has worked, printing usernames and descriptions{RESET}")
+            s = Popen([f"cat LDAP_Null.txt | grep -ia samaccountname > a.txt"], shell=True)
+            s.wait()
+            s = Popen([f"cat LDAP_Null.txt | grep -ia description > LDAP_Null_Description.txt"], shell=True)
+            s.wait()
+            s = Popen([f"cat a.txt | sed 's/ //g' > b.txt"], shell=True)
+            s.wait()          
+            s = Popen([f"cut -d ':' -f 2 b.txt > LDAP_Users.txt"], shell=True)
+            s.wait()
+            with open ("LDAP_Users.txt", "r") as f:
+                content = f.read()
+                print(content)
+            s = Popen([f"rm -rf a.txt b.txt"], shell=True)
+            s.wait()
+            with open ("LDAP_Null_Description.txt", "r") as f:
+                content = f.read()
+                print(content)
 
 def TESTMEH():
     print(f"{YELLOW}Running tests to see if we have {Z}{RESET}")
@@ -373,6 +411,7 @@ def WMIUP():
                 content = f.read()
                 if word in content:
                     print(f"\n{RED}{Z} on WMI{RESET}")
+
 def VNCUP():
     t = "VNC.txt"
     with open ("ports.txt", "r") as f:
@@ -749,6 +788,11 @@ def NULLSP():
                     os.remove("a.txt")
                     os.remove("b.txt")
                     os.remove("c.txt")
+
+def CERTIFICATESUP():
+    s = Popen([f"certipy-ad find -u {USERNAME} -p {PASSWORD} -dc-ip {RHOST} -stdout -vulnerable"], shell = True)
+    s.wait()
+
 def NULLSF():
     with open ("ports.txt", "r") as f:
         content = f.read()
@@ -811,17 +855,17 @@ def main():
         NMAPR()
     
     if NULL is not False and RHOST != None:
-        NULLSP()
+        NULLSP();LDAPSEARCHNULL();LDAPSEARCHNULLCHECK()
     
     if NULL is not False and FILE != None:
         NULLSF()
 
     if TEST is not False and PASSWORD != None:
         if L is not False:
-            TESTME();SMBSTAT();LDAPTEST();LANEBOY()
+            TESTME();SMBSTAT();LDAPTEST();CERTIFICATES();LANEBOY()
     
         else:
-            TESTME();SMBSTAT();LANEBOY()
+            TESTME();SMBSTAT();CERTIFICATES();LANEBOY()
     
     if TEST is not False and HASH != None:
         if L is not False:
@@ -834,11 +878,11 @@ def main():
         if L is not False:
             SMBUP();RDPUP();WINRMUP();SSHUP()
             LDAPUP();MSSQLUP();WMIUP();VNCUP()
-            SMBSTAT();REMINDER();EYELIDS()
+            SMBSTAT();CERTIFICATES();REMINDER();EYELIDS()
     
         else:
             SMBUP();RDPUP();WINRMUP();SSHUP()
-            MSSQLUP();WMIUP();VNCUP();SMBSTAT()
+            MSSQLUP();WMIUP();VNCUP();SMBSTAT();CERTIFICATES();
             REMINDER();EYELIDS()
     
     if HASH != None and TEST is not True:
